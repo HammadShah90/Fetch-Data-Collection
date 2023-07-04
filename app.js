@@ -19,11 +19,11 @@ let cartButtons = document.querySelector(".cartButtons");
 let cartButtonContent = [];
 
 
-const cartBtns = ["All", "Men's Clothing", "Women's clothing", "Jewelery", "Electronics",]
+const cartBtns = ["All", "Mens Clothing", "Womens Clothing", "Jewelery", "Electronics",]
 // console.log(cardBtns);
 
 cartBtns.forEach((btns) => {
-    let categoryBtns = `<button class="cartBtn text-warning" onmouseover="colorChange()">${btns}</button>`;
+    let categoryBtns = `<button class="cartBtn text-warning" onclick="changeCategory('${btns}')">${btns}</button>`;
     // console.log(categoryBtns);
     
     cartButtonContent.push(categoryBtns);
@@ -72,12 +72,16 @@ const cardCollections = (cartData) => {
         // console.log(cartItemListContent);
     })
 
+    // console.log(cartItemListContent);
+
     cartDataArray = cartItemListContent.join("");
+
+    // console.log(cartDataArray);
 
     cartItems.innerHTML = cartDataArray;
     // console.log(cartItems);
 
-    changeCategory(cartData)
+    // changeCategory(cartData)
 }
 
 
@@ -91,17 +95,22 @@ function colorChange() {
 // ---------------Menu Categery List---------------------------------------------------------------------------------------
 
 const changeCategory = (find) => {
-    console.log(find);
+    console.log(find.category);
 
+    // for(i = 0; i = find[i].lenght; i++) {
+    //     console.log(find);
+    // }
+let filterFindCategory;
 
     if (find == "All") {
 
-        cartButtons.innerHTML = cartButtonContent.join("");
-        // console.log(menuButtons);
+        cartItems.innerHTML = cartDataArray;
+        // console.log(cartItems);
 
     } else {
 
-        const findCategory = find.filter((cart) => cart.category.toLowerCase() === find.toLowerCase()).map((cart) => {
+        const findCategory = find.filter((cart) => cart.category.toLowerCase() === find.toLowerCase())
+        .map((cart) => {
             return `<div class="cartBox">
                         <div class="cartImg">
                             <img src="${cart.image}" alt="">
@@ -117,8 +126,14 @@ const changeCategory = (find) => {
                         </div>
                     </div>`;
         })
-        // console.log(findCategory)
-        cartItems.innerHTML = findCategory.join("");
+
+        console.log(findCategory);
+
+        filterFindCategory = findCategory.join("")
+
+        console.log(filterFindCategory)
+        
+        cartItems.innerHTML = filterFindCategory;
 
     }
 }
@@ -127,15 +142,26 @@ const changeCategory = (find) => {
 // ---------------Fetch Categery Data---------------------------------------------------------------------------------------
 
 
-const getCategoryData = () => {
-    fetch(`https://fakestoreapi.com/products/`)
-        .then(function (response) {
-            // console.log(response, "==>> response of fetchData")
-            return response.json()
-        }).then(function (data) {
-            // console.log(data, "==>> Data as jsonFile")
-            cardCollections(data)
-        })
+const getCategoryData = async () => {
+    try {
+        const response = await fetch(`https://fakestoreapi.com/products/`)
+        if (response.status === 204) {
+            throw new Error("Something is wrong")
+        }
+        const responseData = await response.json()
+        console.log(responseData);
+        cardCollections(responseData)
+    } catch (error) {
+        console.log(error.message);
+    }
+    
+        // .then(function (response) {
+        //     // console.log(response, "==>> response of fetchData")
+        //     return response.json()
+        // }).then(function (data) {
+        //     console.log(data, "==>> Data as jsonFile")
+        //     cardCollections(data)
+        // })
 }
 
 getCategoryData();
